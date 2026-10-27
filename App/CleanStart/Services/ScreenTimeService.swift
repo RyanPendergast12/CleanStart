@@ -44,7 +44,11 @@ final class ScreenTimeService: ObservableObject {
         case .notDetermined: return .notDetermined
         case .denied: return .denied
         case .approved: return .approved
-        @unknown default: return .unavailable
+        default:
+            // Newer SDKs add approval variants (e.g. `.approvedWithDataAccess`)
+            // that aren't available on every OS this app supports; any of them
+            // still grants the Managed Settings access CleanStart needs.
+            return String(describing: status).hasPrefix("approved") ? .approved : .unavailable
         }
     }
 
@@ -59,7 +63,7 @@ final class ScreenTimeService: ObservableObject {
             case .authorizationCanceled: return "Authorization was cancelled. You can try again any time."
             case .networkError: return "Screen Time authorization needs an internet connection. Try again when connected."
             case .authenticationMethodUnavailable: return "Set a device passcode to authorize Screen Time."
-            @unknown default: return familyError.localizedDescription
+            default: return familyError.localizedDescription
             }
         }
         let text = (error as NSError).localizedDescription
