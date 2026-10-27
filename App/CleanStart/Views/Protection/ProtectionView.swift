@@ -160,7 +160,7 @@ struct AccountabilityView: View {
             }
 
             Section("What this can and can't do") {
-                Text("Enforced inside CleanStart: removing DNS filtering, removing shields, turning off the web filter, shortening schedules, and shortening this delay.")
+                Text("Enforced inside CleanStart: removing DNS filtering, removing shields, turning off the web filter, changing or stopping schedules, and shortening this delay.")
                 Text("Not enforceable: as the device owner you can always remove the DNS setting in iOS Settings or turn off CleanStart's Screen Time access. For stronger friction, ask a trusted person to set a Screen Time passcode you don't know.")
             }
             .font(.footnote)

@@ -16,9 +16,11 @@ public struct VerificationHistory: Codable, Equatable, Sendable {
         reports.last { $0.verdict == .verified || $0.verdict == .blockingObserved }
     }
 
-    /// The verdict before the latest one, used to detect regressions.
+    /// The last conclusive verdict before the latest report, used to detect
+    /// regressions. Inconclusive runs (e.g. briefly offline) are skipped so they
+    /// can't hide a change from "verified" to "not filtering".
     public var previousVerdict: FilterVerdict? {
-        reports.count >= 2 ? reports[reports.count - 2].verdict : nil
+        reports.dropLast().last { $0.verdict != .inconclusive }?.verdict
     }
 
     public mutating func append(_ report: FilterVerificationReport) {

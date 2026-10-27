@@ -49,4 +49,5 @@ jobs:
           tail -5 build.log
       - name: Warnings summary
         if: always()
-        run: grep -E "warning:|error:|note: add missing case|note: handle unknown" build.log | sort -u | head -100 || true
+        run: |
+          grep -E "warning:|error:|note: add missing case|note: handle unknown" build.log | sort -u | head -100 || true

@@ -119,6 +119,15 @@ final class StorageTests: XCTestCase {
         XCTAssertEqual(history.lastSuccessful?.verdict, .verified)
     }
 
+    func testRegressionLooksPastInconclusiveRuns() {
+        var history = VerificationHistory()
+        for verdict in [FilterVerdict.verified, .inconclusive, .inconclusive, .notFiltering] {
+            history.append(FilterVerificationReport(date: Date(), verdict: verdict, results: [], networkDescription: "Wi-Fi"))
+        }
+        XCTAssertEqual(history.previousVerdict, .verified)
+        XCTAssertNil(VerificationHistory().previousVerdict)
+    }
+
     func testWorkChecklist() {
         var list = WorkChecklist()
         for item in WorkChecklist.items { list.set(item.id, done: true) }
