@@ -1,0 +1,52 @@
+name: Build & test
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  core-linux:
+    name: Core tests (Linux)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: swift-actions/setup-swift@v2
+        with:
+          swift-version: "6.1"
+      - name: Unit tests
+        working-directory: CleanStartCore
+        run: swift test
+      - name: Live provider tests (CleanBrowsing DoH, DNS only)
+        working-directory: CleanStartCore
+        env:
+          CLEANSTART_LIVE_TESTS: "1"
+        run: swift test --filter LiveProviderTests
+
+  ios-build:
+    name: iOS app build (unsigned)
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Select newest Xcode
+        run: |
+          ls -d /Applications/Xcode*.app
+          XCODE=$(ls -d /Applications/Xcode_*.app | sort -V | tail -1)
+          sudo xcode-select -s "$XCODE"
+          xcodebuild -version
+      - name: Core tests (macOS)
+        working-directory: CleanStartCore
+        run: swift test
+      - name: Generate Xcode project
+        run: |
+          brew install xcodegen
+          xcodegen generate
+      - name: Build for iOS device (no signing)
+        run: |
+          set -o pipefail
+          xcodebuild -project CleanStart.xcodeproj -scheme CleanStart \
+            -configuration Debug -destination 'generic/platform=iOS' \
+            -derivedDataPath build CODE_SIGNING_ALLOWED=NO build > build.log 2>&1 || (grep -E "error:" build.log | sort -u; tail -80 build.log; exit 1)
+          tail -5 build.log
+      - name: Warnings summary
+        if: always()
+        run: grep -E "warning:|error:" build.log | sort -u | head -100 || true
