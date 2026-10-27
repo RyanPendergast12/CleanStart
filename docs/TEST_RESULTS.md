@@ -24,7 +24,7 @@ own computer, so I couldn't inspect your machine. Xcode can't run on Linux, so:
 | **Live probe test vs. real CleanBrowsing Family DoH** (`CLEANSTART_LIVE_TESTS=1`) | Linux, local and CI | ✅ verdict **verified**: control lookups resolved, both adult domains NXDOMAIN, duckduckgo.com → safe.duckduckgo.com, www.google.com → 216.239.38.120 |
 | **Live negative test vs. unfiltered resolver** (Cloudflare 1.1.1.1 DoH) | Linux, local and CI | ✅ verdict **not filtering**. The verifier doesn't produce false "verified" results. |
 | XcodeGen project generation (XcodeGen 2.46.0) | macOS CI | ✅ |
-| iOS build of app + DeviceActivity monitor extension + shield extension (Debug, unsigned) | macOS CI, newest Xcode on the runner | ✅ `** BUILD SUCCEEDED **` (see CI run for warnings) |
+| iOS build of app + DeviceActivity monitor extension + shield extension (Debug, unsigned) | macOS CI, newest Xcode on the runner | ✅ `** BUILD SUCCEEDED **`, 0 compiler warnings in project code (CI run 40459369737, commit baccaa9) |
 | Code signing with the DNS Settings / Family Controls entitlements | — | ⛔ Not possible without your Apple Developer team |
 | Installation, DNS activation, Wi-Fi/cellular filtering, DuckDuckGo, Screen Time, Teams | — | ⛔ Requires your iPhone. See TEST_PLAN.md |
 
